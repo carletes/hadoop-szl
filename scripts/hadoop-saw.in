@@ -1,0 +1,13 @@
+#!/bin/sh
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+pythondir=@pythondir@
+
+pythonpath=${pythonpath:-@pythondir@}
+hadoop_szl_runner=${hadoop_szl_runner:-@libexecdir@/hadoop-szl-runner}
+
+exec env \
+  PYTHONPATH=$pythonpath \
+  HADOOP_SZL_RUNNER=$hadoop_szl_runner \
+    @PYTHON@ -m hadoopszl "$@"

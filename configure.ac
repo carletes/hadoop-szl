@@ -30,7 +30,12 @@ HADOOP_PIPES_LIBS="-lhadooppipes -lhadooputils"
 AC_SUBST(HADOOP_PIPES_CFLAGS)
 AC_SUBST(HADOOP_PIPES_LIBS)
 
+# Python
+AM_PATH_PYTHON([2.6])
+AC_PYTHON_MODULE(argparse, t)
+
 AC_CONFIG_FILES([
   Makefile
+  scripts/hadoop-saw
 ])
 AC_OUTPUT

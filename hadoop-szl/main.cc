@@ -11,6 +11,7 @@
 using HadoopPipes::runTask;
 using HadoopPipes::TemplateFactory;
 
+
 int main(int argc, char *argv[]) {
     return runTask(TemplateFactory<hadoop_szl::Map, hadoop_szl::Reduce>());
 }
