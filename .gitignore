@@ -15,4 +15,5 @@ Makefile.in
 /hadoop-szl-runner
 /libtool
 /m4/
+/scripts/hadoop-saw
 /stamp-h1

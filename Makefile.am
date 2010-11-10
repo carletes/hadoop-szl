@@ -19,5 +19,20 @@ scripts/hadoop-saw: scripts/hadoop-saw.in
 python_PYTHON = \
 	python/hadoopszl.py
 
+TESTS = \
+	test/wc/run.sh
+
+TESTS_ENVIRONMENT = \
+	pythonpath=$(abs_top_srcdir)/python \
+	hadoop_szl_runner=$(abs_top_builddir)/hadoop-szl-runner \
+	PATH=$(abs_top_builddir)/scripts:$$PATH
+
+all-local:
+	chmod 0755 scripts/hadoop-saw
+
 EXTRA_DIST = \
+	$(TESTS) \
+	test/wc/lorem.txt \
+	test/wc/wc.conf \
+	test/wc/wc.szl \
 	scripts/hadoop-saw.in

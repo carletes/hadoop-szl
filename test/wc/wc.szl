@@ -1,0 +1,15 @@
+# wc.szl
+#
+# Equivalent of Unix's wc(1).
+#
+# Taken from http://szl.googlecode.com/svn/doc/sawzall-language.html
+
+nlines: table sum of int;  # Lines
+nwords: table sum of int;  # White-space separated tokens
+nchars: table sum of int;  # Unicode characters
+nbytes: table sum of int;  # Raw bytes
+
+emit nlines <- 1;
+emit nwords <- len(sawzall(string(input), "[^ \t]+"));
+emit nchars <- len(string(input));
+emit nbytes <- len(input);
