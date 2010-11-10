@@ -1,9 +1,5 @@
 #!/bin/sh
 
-set -x
-
-echo $PATH
-
 srcdir="$(cd $(dirname $0) && pwd)"
 job_dir="hdfs:/user/$USER/hadoop-szl/test/$(basename $srcdir)"
 input_dir="$job_dir/in"

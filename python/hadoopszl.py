@@ -16,39 +16,6 @@ LOG = logging.getLogger(__name__)
 
 
 def hadoop_pipes(program, input_dir, output_dir, env):
-    """
-    #!/bin/sh
-
-    set -eux
-
-    top_srcdir=$(cd $(dirname $0) && pwd)
-    top_builddir=$(pwd)
-
-    job_dir="/user/carlos/hadoop-szl"
-    input_dir="$job_dir/in"
-    output_dir="$job_dir/out"
-
-    make all install
-
-    hadoop fs -rmr $job_dir
-    for d in $input_dir; do
-      hadoop fs -mkdir $d
-    done
-
-    hadoop fs -put \
-      $top_srcdir/access_log-head \
-      $input_dir
-
-    program_file=$top_builddir/hadoop-szl-runner
-
-    hadoop \
-      pipes \
-          -Dhadoop.pipes.java.recordreader=true \
-          -Dhadoop.pipes.java.recordwriter=true \
-          -program file://$program_file \
-          -input hdfs://$input_dir \
-          -output hdfs://$output_dir
-    """
     hadoop_opts = env["hadoop_opts"]
     hadoop_opts["hadoop.pipes.java.recordreader"] = "true"
     hadoop_opts["hadoop.pipes.java.recordwriter"] = "true"
