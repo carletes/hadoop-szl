@@ -20,6 +20,7 @@ python_PYTHON = \
 	python/hadoopszl.py
 
 TESTS = \
+	test/bad-syntax/run.sh \
 	test/wc/run.sh
 
 TESTS_ENVIRONMENT = \
@@ -32,6 +33,7 @@ all-local:
 
 EXTRA_DIST = \
 	$(TESTS) \
+	test/bad-syntax/bad-syntax.szl \
 	test/wc/lorem.txt \
 	test/wc/wc.conf \
 	test/wc/wc.szl \

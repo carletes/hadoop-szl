@@ -15,6 +15,13 @@ __all__ = [
 LOG = logging.getLogger(__name__)
 
 
+def is_bad_szl(program):
+    cmdline = "szl -execute=false %s" % (program,)
+    LOG.info("Executing '%s'", cmdline)
+    proc = subprocess.Popen(cmdline, shell=True)
+    return proc.wait()
+
+
 def hadoop_pipes(program, input_dir, output_dir, env):
     hadoop_opts = env["hadoop_opts"]
     hadoop_opts["hadoop.pipes.java.recordreader"] = "true"
@@ -64,6 +71,9 @@ def main(hadoop_szl_runner=None):
         "hadoop_szl_runner": hadoop_szl_runner,
         "hadoop_opts": {}
     }
+
+    if is_bad_szl(args.program):
+        return 1
 
     return hadoop_pipes(args.program, args.input_dir, args.output_dir, env)
 

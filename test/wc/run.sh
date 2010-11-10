@@ -10,6 +10,6 @@ hadoop fs -mkdir $input_dir
 hadoop fs -put $srcdir/*.txt $input_dir
 
 hadoop-saw \
-  file://$srcdir/wc.szl \
+  /$srcdir/wc.szl \
   $input_dir \
   $output_dir
