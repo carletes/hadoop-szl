@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 libexec_PROGRAMS = hadoop-szl-runner
 
 hadoop_szl_runner_SOURCES = \
-	hadoop-szl/main.cc \
+	hadoop-szl/hadoop-szl-runner.cc \
 	hadoop-szl/map.h \
 	hadoop-szl/map.cc \
 	hadoop-szl/reduce.h \

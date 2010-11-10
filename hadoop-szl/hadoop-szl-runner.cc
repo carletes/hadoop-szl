@@ -1,5 +1,5 @@
 //
-// main.cc
+// hadoop-szl-runner.cc
 //
 
 #include <hadoop/Pipes.hh>
