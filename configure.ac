@@ -26,7 +26,7 @@ AC_SUBST(SZL_LIBS)
 
 # Hadoop Pipes
 HADOOP_PIPES_CFLAGS=""
-HADOOP_PIPES_LIBS="-lhadooppipes -lhadooputils"
+HADOOP_PIPES_LIBS="-lhadooppipes -lhadooputils -lssl -lcrypto"
 AC_SUBST(HADOOP_PIPES_CFLAGS)
 AC_SUBST(HADOOP_PIPES_LIBS)
 
