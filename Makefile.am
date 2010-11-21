@@ -16,6 +16,15 @@ bin_SCRIPTS = scripts/hadoop-saw
 
 scripts/hadoop-saw: scripts/hadoop-saw.in
 
+noinst_PROGRAMS = \
+	mapper
+
+mapper_SOURCES = \
+	sandbox/mapper.cc
+
+mapper_CPPFLAGS = $(SZL_CFLAGS)
+mapper_LDADD = $(SZL_LIBS)
+
 python_PYTHON = \
 	python/hadoopszl.py
 
