@@ -26,10 +26,13 @@ def hadoop_pipes(program, input_dir, output_dir, env):
     hadoop_opts = env["hadoop_opts"]
     hadoop_opts["hadoop.pipes.java.recordreader"] = "true"
     hadoop_opts["hadoop.pipes.java.recordwriter"] = "true"
+    hadoop_opts["hadoop.pipes.command-file.keep"] = "true"
 
     cmdline = ["hadoop", "pipes"]
     for opt in sorted(hadoop_opts):
         cmdline.append("-D%s=%s" % (opt, hadoop_opts[opt]))
+    cmdline.append("-files")
+    cmdline.append(program)
     cmdline.append("-program")
     cmdline.append("file://%s" % (env["hadoop_szl_runner"],))
     cmdline.append("-input")
@@ -57,7 +60,7 @@ def main(hadoop_szl_runner=None):
 
     args = p.parse_args()
 
-    logging.basicConfig(level=logging.WARN,
+    logging.basicConfig(level=logging.DEBUG,
                         format="%(message)s")
 
     if hadoop_szl_runner is None:
