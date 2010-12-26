@@ -1,5 +1,12 @@
 ACLOCAL_AMFLAGS = -I m4
 
+noinst_LTLIBRARIES = libhadoop-szl-impl.la
+
+libhadoop_szl_impl_la_SOURCES =\
+	hadoop-szl/emitter.h \
+	hadoop-szl/emitter.cc
+libhadoop_szl_impl_la_CPPFLAGS = $(SZL_CFLAGS)
+
 libexec_PROGRAMS = hadoop-szl-runner
 
 hadoop_szl_runner_SOURCES = \
@@ -10,20 +17,40 @@ hadoop_szl_runner_SOURCES = \
 	hadoop-szl/reduce.cc
 
 hadoop_szl_runner_CPPFLAGS = $(SZL_CFLAGS) $(HADOOP_PIPES_CFLAGS)
-hadoop_szl_runner_LDADD = $(SZL_LIBS) $(HADOOP_PIPES_LIBS)
+hadoop_szl_runner_LDADD = \
+	libhadoop-szl-impl.la \
+	$(SZL_LIBS) \
+	$(SZL_EMITTERS_LIBS) \
+	$(SZL_INTRINSICS_LIBS) \
+	$(HADOOP_PIPES_LIBS)
 
 bin_SCRIPTS = scripts/hadoop-saw
 
 scripts/hadoop-saw: scripts/hadoop-saw.in
 
 noinst_PROGRAMS = \
-	mapper
+	mapper \
+	reducer
 
 mapper_SOURCES = \
 	sandbox/mapper.cc
 
 mapper_CPPFLAGS = $(SZL_CFLAGS)
-mapper_LDADD = $(SZL_LIBS)
+mapper_LDADD = \
+	libhadoop-szl-impl.la \
+	$(SZL_LIBS) \
+	$(SZL_EMITTERS_LIBS) \
+	$(SZL_INTRINSICS_LIBS)
+
+reducer_SOURCES = \
+	sandbox/reducer.cc
+
+reducer_CPPFLAGS = $(SZL_CFLAGS)
+reducer_LDADD = \
+	libhadoop-szl-impl.la \
+	$(SZL_LIBS) \
+	$(SZL_EMITTERS_LIBS) \
+	$(SZL_INTRINSICS_LIBS)
 
 python_PYTHON = \
 	python/hadoopszl.py

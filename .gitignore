@@ -1,5 +1,8 @@
 .*.swp
 .deps/
+.libs/
+*.la
+*.lo
 *.o
 Makefile
 Makefile.in
@@ -14,6 +17,8 @@ Makefile.in
 /hadoop-szl-*.tar.gz
 /hadoop-szl-runner
 /libtool
+/mapper
 /m4/
+/reducer
 /scripts/hadoop-saw
 /stamp-h1

@@ -91,7 +91,7 @@ class EmitterFactory : public sawzall::EmitterFactory {
     EmitterFactory() {}
 
     ~EmitterFactory() {
-        for (int i = 0; i < emitters_.size(); i++) {
+        for (unsigned int i = 0; i < emitters_.size(); i++) {
             sawzall::Emitter* e = emitters_[i];
             delete e;
         }
