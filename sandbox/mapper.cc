@@ -48,11 +48,16 @@ int main(int argc, char **argv) {
 
     int rc = 0;
     string line;
+    int i = 0;
     while (getline(in, line)) {
         if (!process.Run(line.data(), line.size(), NULL, 0)) {
             cerr << argv[1] << ": Cannot process [" << line << "]" << endl;
             rc = 1;
         }
+        if (i % 2) {
+            emitter_factory.Flush();
+        }
+        ++i;
     }
     emitter_factory.Flush();
     return rc;

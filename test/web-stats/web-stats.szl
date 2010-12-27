@@ -1,0 +1,65 @@
+addresses:        table sum[address: string] of count: int;
+bytes_out:        table sum of int;
+n_hits:           table sum of int;
+n_pages:          table sum of int;
+status_codes:     table sum[code: int] of count: int;
+user_agents:      table sum[ua: string] of count: int;
+users:            table sum[uid: string] of count: int;
+uris:             table sum[uri: string] of count: int;
+
+
+rec: {
+  address: string,
+  ident:   string,
+  uid:     string,
+  tstamp:  string,
+  cmdline:  string,
+  status:  int,
+  bytes:   string,
+  referer: string,
+  ua:      string
+} = saw(string(input),
+        `^[^ ]+`,                   skip `^ `,  # address
+        `^[^ ]+`,                   skip `^ `,  # ident
+	`^[^ ]+`,                   skip `^ `,  # uid
+	submatch `^\[([^\]]+)\] `,              # tstamp
+	submatch `^"([^"]*)" `,                 # cmdline
+	`^[^ ]+`,                   skip ` `,   # status
+	`^[^ ]+`,                   skip ` `,   # bytes
+	submatch `^"([^"]*)" `,                 # referer
+	submatch `^"([^"]*)`                    # ua
+);
+
+cmdline: {
+  cmd: string,
+  uri: string,
+  version: string
+} = saw(rec.cmdline,
+        `^[^ ]+`, skip ` `,
+	`^[^ ]+`, skip ` `,
+	rest rec.cmdline);
+
+
+emit n_hits <- 1;
+emit addresses[rec.address] <- 1;
+
+n := int(rec.bytes);
+if (def(n)) {
+  emit bytes_out <- n;
+}
+
+# n_pages
+
+emit status_codes[rec.status] <- 1;
+
+if (!match(`^\-$`, rec.ua)) {
+  emit user_agents[rec.ua] <- 1;
+}
+
+if (!match(`^\-$`, rec.uid)) {
+  emit users[rec.uid] <- 1;
+}
+
+if (def(cmdline)) {
+  emit uris[cmdline.uri] <- 1;
+}

@@ -21,6 +21,11 @@ class Emitter : public SzlEmitter {
     Emitter(const std::string& name, const SzlTabWriter* writer);
     ~Emitter();
 
+    static bool Parse(const std::string& line,
+                      std::string* name,
+                      std::string* key, 
+                      std::string* value);
+
   private:
     virtual void WriteValue(const std::string& key, const std::string& value);
 };

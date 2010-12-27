@@ -3,8 +3,13 @@ ACLOCAL_AMFLAGS = -I m4
 noinst_LTLIBRARIES = libhadoop-szl-impl.la
 
 libhadoop_szl_impl_la_SOURCES =\
+	hadoop-szl/base64.h \
+	hadoop-szl/base64.cc \
 	hadoop-szl/emitter.h \
-	hadoop-szl/emitter.cc
+	hadoop-szl/emitter.cc \
+	hadoop-szl/table.h \
+	hadoop-szl/table.cc
+
 libhadoop_szl_impl_la_CPPFLAGS = $(SZL_CFLAGS)
 
 libexec_PROGRAMS = hadoop-szl-runner
