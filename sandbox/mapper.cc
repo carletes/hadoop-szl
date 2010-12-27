@@ -2,7 +2,7 @@
 // mapper.cc
 //
 
-#include <cstring>
+#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -15,21 +15,9 @@
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::ifstream;
 
 using hadoop_szl::EmitterFactory;
-
-
-const char *input[] = {
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do",
-    "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut",
-    "enim ad minim veniam, quis nostrud exercitation ullamco laboris",
-    "nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
-    "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla",
-    "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in",
-    "culpa qui officia deserunt mollit anim id est laborum.",
-    "Blah, blah."
-};
-
 
 
 int main(int argc, char **argv) {
@@ -52,11 +40,20 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    for (int i = 0; i < 8; i++) {
-        if (!process.Run(input[i], strlen(input[i]), NULL, 0)) {
-            cerr << argv[1] << ": Cannot execute" << endl;
-            return 1;
+    ifstream in(argv[2]);
+    if (!in) {
+        cerr << argv[1] << ": Cannot open " << argv[2] << endl;
+        return 1;
+    }
+
+    int rc = 0;
+    string line;
+    while (getline(in, line)) {
+        if (!process.Run(line.data(), line.size(), NULL, 0)) {
+            cerr << argv[1] << ": Cannot process [" << line << "]" << endl;
+            rc = 1;
         }
     }
     emitter_factory.Flush();
+    return rc;
 }
