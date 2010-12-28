@@ -7,18 +7,35 @@
 
 #include <hadoop/Pipes.hh>
 
+#include <hadoop-szl/runner.h>
 
-namespace HadoopPipes {
-class MapContext;
-}
 
 namespace sawzall {
-class Executable;
 class Process;
 }
 
 
 namespace hadoop_szl {
+
+class EmitterFactory;
+class Map;
+
+
+class SawzallMapRunner : SawzallRunner {
+  public:
+    SawzallMapRunner(HadoopPipes::TaskContext& context, Map& mapper);
+    virtual ~SawzallMapRunner();
+
+    virtual bool Init(std::string* error);
+    bool Run(HadoopPipes::MapContext& context, const std::string& input);
+
+  private:
+    Map& mapper_;
+    sawzall::Process* process_;
+    EmitterFactory* emitter_factory_;
+    bool initialized_;
+};
+
 
 class Map : public HadoopPipes::Mapper {
   public:
@@ -26,15 +43,10 @@ class Map : public HadoopPipes::Mapper {
     virtual ~Map();
     void map(HadoopPipes::MapContext&);
 
-    const HadoopPipes::MapContext* context() const { return context_; }
+    HadoopPipes::MapContext* context;
 
   private:
-    void init(HadoopPipes::TaskContext&);
-
-    sawzall::Executable* exe_;
-    sawzall::Process* process_;
-    const std::string* szl_file_name_;
-    HadoopPipes::MapContext* context_;
+    SawzallMapRunner* szl_;
 };
 
 }

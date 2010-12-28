@@ -12,6 +12,7 @@
 #include <google/szl/szltabentry.h>
 
 #include <hadoop-szl/base64.h>
+#include <hadoop-szl/map.h>
 
 
 using std::cout;
@@ -19,11 +20,14 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
+using HadoopPipes::MapContext;
+
 
 namespace hadoop_szl {
 
-Emitter::Emitter(const string& name, const SzlTabWriter* writer)
-    : SzlEmitter(name, writer, false)
+Emitter::Emitter(const string& name, const SzlTabWriter* writer,
+                 const Map* mapper)
+    : SzlEmitter(name, writer, false), mapper_(mapper)
 {
 }
 
@@ -57,10 +61,18 @@ Emitter::EncodeValue(const string& src, string* dest)
 void
 Emitter::WriteValue(const string& key, const string& value)
 {
+    cerr << "In HadoopEmitter::WriteValue()" << endl;
     string enc_key, enc_value;
     EncodeKey(key, &enc_key);
     EncodeValue(value, &enc_value);
-    cout << enc_key << " " << enc_value << endl;
+    if (mapper_ != NULL) {
+        cerr << "Emitting [" << enc_key << "] [" << enc_value << "]" << endl;
+        MapContext* ctx = const_cast<MapContext *>(mapper_->context);
+        cerr << "Map context: " << ctx << endl;
+        ctx->emit(enc_key, enc_value);
+    } else {
+        cout << enc_key << " " << enc_value << endl;
+    }
 }
 
 bool
@@ -102,7 +114,8 @@ Emitter::Parse(const string& line, string* name, string* key, string* value)
     return true;
 }
 
-EmitterFactory::EmitterFactory()
+EmitterFactory::EmitterFactory(const Map* mapper)
+    : mapper_(mapper)
 {
 }
 
@@ -125,7 +138,7 @@ EmitterFactory::NewEmitter(sawzall::TableInfo* table_info, string* error)
                                error)) {
         SzlTabWriter* tw = SzlTabWriter::CreateSzlTabWriter(type, error);
         if (tw != NULL) {
-            emitter = new Emitter(table_info->name(), tw);
+            emitter = new Emitter(table_info->name(), tw, mapper_);
         }
     }
     emitters_.push_back(emitter);

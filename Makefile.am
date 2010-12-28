@@ -7,8 +7,8 @@ libhadoop_szl_impl_la_SOURCES =\
 	hadoop-szl/base64.cc \
 	hadoop-szl/emitter.h \
 	hadoop-szl/emitter.cc \
-	hadoop-szl/hadoop-emitter.h \
-	hadoop-szl/hadoop-emitter.cc \
+	hadoop-szl/runner.h \
+	hadoop-szl/runner.cc \
 	hadoop-szl/table.h \
 	hadoop-szl/table.cc
 

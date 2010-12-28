@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     }
 
     sawzall::Process process(&exe, false, NULL);
-    EmitterFactory emitter_factory;
+    EmitterFactory emitter_factory(NULL);
     process.set_emitter_factory(&emitter_factory);
     sawzall::RegisterEmitters(&process);
 

@@ -7,94 +7,100 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 
-#include <hadoop/StringUtils.hh>
+#include <hadoop-szl/runner.h>
 
 #include <google/szl/porting.h>
-#include <google/szl/commandlineflags.h>
 #include <google/szl/sawzall.h>
 
-#include <hadoop-szl/hadoop-emitter.h>
+#include <hadoop-szl/emitter.h>
 
 
 using std::cerr;
 using std::endl;
-using std::runtime_error;
 using std::stringstream;
-
-using sawzall::Executable;
-using sawzall::Process;
 
 using HadoopPipes::MapContext;
 using HadoopPipes::TaskContext;
 
+using sawzall::Process;
+
 
 namespace hadoop_szl {
 
-Map::Map(TaskContext& context) {
-    init(context);
+SawzallMapRunner::SawzallMapRunner(TaskContext& context, Map& mapper)
+    : SawzallRunner(context), mapper_(mapper), process_(NULL), emitter_factory_(NULL), initialized_(false)
+{
 }
 
-Map::~Map() {
-    delete szl_file_name_;
+SawzallMapRunner::~SawzallMapRunner()
+{
     delete process_;
-    delete exe_;
+    delete emitter_factory_;
 }
 
-void Map::init(TaskContext& context) {
-    vector<string> cache_files =
-        HadoopUtils::splitString(context.getJobConf()->get("mapred.cache.files"), ",");
-
-    string szl_file(cache_files[1]);
-    string::size_type i = szl_file.find('#');
-    if (i == string::npos) {
-        stringstream s;
-        s << "Missing '#' in Sawzall file name " << szl_file;
-        string err(s.str());
-        cerr << err << endl;
-        cerr.flush();
-        throw runtime_error(err);
-    }
-    szl_file_name_ = new string(szl_file.substr(i + 1));
-    cerr << "Sawzall program: " << *szl_file_name_ << endl;
-
-    exe_ = new Executable(szl_file_name_->c_str(), NULL, sawzall::kNormal);
-    if (!exe_->is_executable()) {
-        stringstream s;
-        s << *szl_file_name_ << ": Not a valid Sawzall program";
-        string err(s.str());
-        cerr << err << endl;
-        cerr.flush();
-        throw runtime_error(err);
+bool
+SawzallMapRunner::Init(string* error)
+{
+    if (initialized_) {
+        return true;
     }
 
-    process_ = new Process(exe_, false, NULL);
-    HadoopEmitterFactory emitter_factory(*this);
-    process_->set_emitter_factory(&emitter_factory);
+    cerr << "In SawzallMapRunner::Init()" << endl;
+
+    if (!SawzallRunner::Init(error)) {
+        return false;
+    }
+
+    if (process_ == NULL) {
+        process_ = new Process(exe_, false, NULL);
+        emitter_factory_ = new EmitterFactory(&mapper_);
+        process_->set_emitter_factory(emitter_factory_);
+    }
 
     if (!process_->Initialize()) {
         stringstream s;
-        s << *szl_file_name_ << ": Cannot initialise Sawzall process";
-        string err(s.str());
-        cerr << err << endl;
-        cerr.flush();
-        throw runtime_error(err);
+        s << *szl_file_name_ << ": Cannot initialize Sawzall process";
+        *error = s.str();
+        return false;
     }
+    initialized_ = true;
+    return true;
+}
+
+bool
+SawzallMapRunner::Run(MapContext& context, const string& input)
+{
+    mapper_.context = &context;
+    if (!process_->Run(input.c_str(), strlen(input.c_str()), NULL, 0)) {
+        return false;
+    }
+    emitter_factory_->Flush();
+    return true;
+}
+
+Map::Map(TaskContext& context)
+{
+    szl_ = new SawzallMapRunner(context, *this);
+}
+
+Map::~Map()
+{
+    delete szl_;
 }
 
 void Map::map(MapContext& context) {
+    string error;
+    if (!szl_->Init(&error)) {
+        cerr << "Error initializing Sawzall: " << error << endl;
+        return;
+    }
+
     string input(context.getInputValue());
     cerr << "Processing input [" << input << "]" << endl;
-    cerr.flush();
-    context_ = &context;
-    if (!process_->Run(input.c_str(), strlen(input.c_str()), NULL, 0)) {
-        cerr << *szl_file_name_ << ": Cannot run on input [" << input << "]" << endl;
-        cerr.flush();
-    } else {
-        cerr << "Done processing input [" << input << "]" << endl;
-        cerr.flush();
+    if (!szl_->Run(context, input)) {
+        cerr << "Cannot run on input [" << input << "]" << endl;
     }
 }
 
