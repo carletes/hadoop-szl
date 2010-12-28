@@ -1,0 +1,12 @@
+Source: hadoop-szl
+Section: misc
+Priority: extra
+Maintainer: Carlos Valiente <carlos@pepelabs.net>
+#Build-Depends: debhelper (>=7.0.50~), autotools-dev, dh-autoreconf, hadoop-0.20-pipes, pkg-config, python2.6, python-argparse, szl-dev
+Build-Depends: debhelper (>=7.0.50~), autotools-dev, dh-autoreconf, hadoop-0.20-pipes, pkg-config, python2.6, python-argparse
+Standards-Version: 3.8.4
+
+Package: hadoop-szl
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Driver to run Hadoop MapReduce jobs written in Sawzall
