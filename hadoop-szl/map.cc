@@ -5,7 +5,6 @@
 #include <hadoop-szl/map.h>
 
 #include <cstring>
-#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -17,8 +16,6 @@
 #include <hadoop-szl/emitter.h>
 
 
-using std::cerr;
-using std::endl;
 using std::stringstream;
 
 using HadoopPipes::MapContext;
@@ -92,14 +89,20 @@ Map::~Map()
 void Map::map(MapContext& context) {
     string error;
     if (!szl_->Init(&error)) {
-        cerr << "Error initializing Sawzall: " << error << endl;
+        stringstream s;
+        s << "Error initializing Sawzall: " << error;
+        context.setStatus(s.str());
         return;
     }
 
     string input(context.getInputValue());
-    cerr << "Processing input [" << input << "]" << endl;
+    context.setStatus("Processing input");
     if (!szl_->Run(context, input)) {
-        cerr << "Cannot run on input [" << input << "]" << endl;
+        stringstream s;
+        s << "Sawzalls failled on input [" << input << "]";
+        context.setStatus(s.str());
+    } else {
+        context.progress();
     }
 }
 

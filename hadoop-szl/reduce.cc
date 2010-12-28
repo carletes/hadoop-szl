@@ -112,6 +112,8 @@ Reduce::reduce(ReduceContext& context)
         s << r.name << "[" << r.key << "]";
         context.emit(s.str(), r.value);
     }
+
+    context.progress();
 }
 
 }
