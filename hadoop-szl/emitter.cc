@@ -5,6 +5,7 @@
 #include <hadoop-szl/emitter.h>
 
 #include <iostream>
+#include <sstream>
 
 #include <google/szl/logging.h>
 #include <google/szl/szldecoder.h>
@@ -16,6 +17,7 @@
 using std::cout;
 using std::endl;
 using std::string;
+using std::stringstream;
 
 
 namespace hadoop_szl {
@@ -30,44 +32,73 @@ Emitter::~Emitter()
 }
 
 void
+Emitter::EncodeKey(const string& src, string* dest)
+{
+    stringstream s;
+
+    s << name_;
+    s << ":";
+    if (src.size()) {
+        string k;
+        Base64Encode(src, &k);
+        s << k;
+    } else {
+        s << "*";
+    }
+    *dest = s.str();
+}
+
+void
+Emitter::EncodeValue(const string& src, string* dest)
+{
+    Base64Encode(src, dest);
+}
+
+void
 Emitter::WriteValue(const string& key, const string& value)
 {
     string enc_key, enc_value;
-
-    if (key.size()) {
-        Base64Encode(key, &enc_key);
-    } else {
-        enc_key = "*";
-    }
-
-    Base64Encode(value, &enc_value);
-    cout << name_ << " " << enc_key << " " << enc_value << endl;
+    EncodeKey(key, &enc_key);
+    EncodeValue(value, &enc_value);
+    cout << enc_key << " " << enc_value << endl;
 }
 
 bool
-Emitter::Parse(const string& line, string* name, string* key, string* value)
+Emitter::ParseNameKey(const string& line, string* name, string* key)
 {
-    string line2 = line;
-    string::size_type sep = line2.find(" ");
-    if (sep == line2.npos) {
+    string::size_type sep = line.find(":");
+    if (sep == line.npos) {
         return false;
     }
-    *name = line2.substr(0, sep);
-    line2 = line2.substr(sep + 1);
+    *name = line.substr(0, sep);
 
-    sep = line2.find(" ");
-    if (sep == line2.npos) {
-        return false;
-    }
-    string enc_key(line2.substr(0, sep));
+    string enc_key(line.substr(sep + 1));
     if (enc_key == "*") {
         *key = "";
     } else {
         Base64Decode(enc_key, key);
     }
-    line2 = line2.substr(sep + 1);
+    return true;
+}
 
-    Base64Decode(line2, value);
+bool
+Emitter::ParseValue(const string& line, string* value)
+{
+    Base64Decode(line, value);
+    return true;
+}
+
+bool
+Emitter::Parse(const string& line, string* name, string* key, string* value)
+{
+    string::size_type sep = line.find(" ");
+    if (sep == line.npos) {
+        return false;
+    }
+    if (!ParseNameKey(line.substr(0, sep), name, key)) {
+        return false;
+    }
+    return ParseValue(line.substr(sep + 1), value);
     return true;
 }
 
@@ -95,8 +126,6 @@ EmitterFactory::NewEmitter(sawzall::TableInfo* table_info, string* error)
         SzlTabWriter* tw = SzlTabWriter::CreateSzlTabWriter(type, error);
         if (tw != NULL) {
             emitter = new Emitter(table_info->name(), tw);
-
-            cerr << "New emitter for '" << table_info->name() << "'" << endl;
         }
     }
     emitters_.push_back(emitter);

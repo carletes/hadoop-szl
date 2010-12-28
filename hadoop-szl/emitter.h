@@ -19,21 +19,30 @@ namespace hadoop_szl {
 class Emitter : public SzlEmitter {
   public:
     Emitter(const std::string& name, const SzlTabWriter* writer);
-    ~Emitter();
+    virtual ~Emitter();
 
+    static bool ParseNameKey(const std::string& line,
+                             std::string* name,
+                             std::string* key);
+    static bool ParseValue(const std::string& line,
+                           std::string* value);
     static bool Parse(const std::string& line,
                       std::string* name,
                       std::string* key, 
                       std::string* value);
 
-  private:
+    const SzlTabWriter* writer() { return writer_; }
+
+  protected:
     virtual void WriteValue(const std::string& key, const std::string& value);
+    void EncodeKey(const std::string& src, std::string* dest);
+    void EncodeValue(const std::string& src, std::string* dest);
 };
 
 class EmitterFactory : public sawzall::EmitterFactory {
   public:
     EmitterFactory();
-    ~EmitterFactory();
+    virtual ~EmitterFactory();
 
     sawzall::Emitter* NewEmitter(sawzall::TableInfo* table_info, std::string* error);
 

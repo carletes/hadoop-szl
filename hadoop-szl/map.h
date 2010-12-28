@@ -8,8 +8,11 @@
 #include <hadoop/Pipes.hh>
 
 
+namespace HadoopPipes {
+class MapContext;
+}
+
 namespace sawzall {
-class EmitterFactory;
 class Executable;
 class Process;
 }
@@ -23,13 +26,15 @@ class Map : public HadoopPipes::Mapper {
     virtual ~Map();
     void map(HadoopPipes::MapContext&);
 
+    const HadoopPipes::MapContext* context() const { return context_; }
+
   private:
     void init(HadoopPipes::TaskContext&);
 
-    sawzall::EmitterFactory* emitter_factory_;
     sawzall::Executable* exe_;
     sawzall::Process* process_;
     const std::string* szl_file_name_;
+    HadoopPipes::MapContext* context_;
 };
 
 }

@@ -27,6 +27,7 @@ def hadoop_pipes(program, input_dir, output_dir, env):
     hadoop_opts["hadoop.pipes.java.recordreader"] = "true"
     hadoop_opts["hadoop.pipes.java.recordwriter"] = "true"
     hadoop_opts["hadoop.pipes.command-file.keep"] = "true"
+    hadoop_opts["keep.failed.task.files"] = "true"
 
     cmdline = ["hadoop", "pipes"]
     for opt in sorted(hadoop_opts):
