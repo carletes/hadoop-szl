@@ -4,8 +4,6 @@
 
 #include <hadoop-szl/runner.h>
 
-#include <cstring>
-#include <iostream>
 #include <sstream>
 #include <vector>
 
@@ -15,10 +13,7 @@
 #include <google/szl/porting.h>
 #include <google/szl/sawzall.h>
 
-#include <hadoop-szl/emitter.h>
 
-using std::cerr;
-using std::endl;
 using std::string;
 using std::stringstream;
 using std::vector;
@@ -46,8 +41,6 @@ SawzallRunner::~SawzallRunner()
 bool
 SawzallRunner::Init(string *error)
 {
-    cerr << "In SawzallRunner::Init()" << endl;
-
     if (initialized_) {
         return true;
     }
@@ -65,7 +58,6 @@ SawzallRunner::Init(string *error)
             return false;
         }
         szl_file_name_ = new string(szl_file.substr(i + 1));
-        cerr << "Sawzall program: " << *szl_file_name_ << endl;
     }
 
     if (exe_ == NULL) {

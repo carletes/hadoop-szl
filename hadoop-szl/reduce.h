@@ -16,6 +16,7 @@ namespace hadoop_szl {
 class SawzallRunner;
 class Table;
 
+
 class Reduce : public HadoopPipes::Reducer {
   public:
     Reduce(HadoopPipes::TaskContext& context);

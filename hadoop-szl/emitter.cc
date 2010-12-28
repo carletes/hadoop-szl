@@ -61,14 +61,11 @@ Emitter::EncodeValue(const string& src, string* dest)
 void
 Emitter::WriteValue(const string& key, const string& value)
 {
-    cerr << "In HadoopEmitter::WriteValue()" << endl;
     string enc_key, enc_value;
     EncodeKey(key, &enc_key);
     EncodeValue(value, &enc_value);
     if (mapper_ != NULL) {
-        cerr << "Emitting [" << enc_key << "] [" << enc_value << "]" << endl;
         MapContext* ctx = const_cast<MapContext *>(mapper_->context);
-        cerr << "Map context: " << ctx << endl;
         ctx->emit(enc_key, enc_value);
     } else {
         cout << enc_key << " " << enc_value << endl;

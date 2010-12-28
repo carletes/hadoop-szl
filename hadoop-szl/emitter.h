@@ -48,7 +48,8 @@ class EmitterFactory : public sawzall::EmitterFactory {
     EmitterFactory(const Map* mapper);
     virtual ~EmitterFactory();
 
-    sawzall::Emitter* NewEmitter(sawzall::TableInfo* table_info, std::string* error);
+    sawzall::Emitter* NewEmitter(sawzall::TableInfo* table_info,
+                                 std::string* error);
 
     void Flush();
 

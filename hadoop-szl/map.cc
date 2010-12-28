@@ -30,7 +30,8 @@ using sawzall::Process;
 namespace hadoop_szl {
 
 SawzallMapRunner::SawzallMapRunner(TaskContext& context, Map& mapper)
-    : SawzallRunner(context), mapper_(mapper), process_(NULL), emitter_factory_(NULL), initialized_(false)
+    : SawzallRunner(context), mapper_(mapper), process_(NULL),
+      emitter_factory_(NULL), initialized_(false)
 {
 }
 
@@ -46,8 +47,6 @@ SawzallMapRunner::Init(string* error)
     if (initialized_) {
         return true;
     }
-
-    cerr << "In SawzallMapRunner::Init()" << endl;
 
     if (!SawzallRunner::Init(error)) {
         return false;

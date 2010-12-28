@@ -4,7 +4,6 @@
 
 #include <hadoop-szl/reduce.h>
 
-#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -18,8 +17,6 @@
 #include <google/szl/szltabentry.h>
 
 
-using std::cerr;
-using std::endl;
 using std::runtime_error;
 using std::string;
 using std::stringstream;
@@ -78,7 +75,6 @@ Reduce::reduce(ReduceContext& context)
 {
     string error;
     if (!Init(&error)) {
-        cerr << error << endl;
         throw runtime_error(error);
     }
 
@@ -87,40 +83,26 @@ Reduce::reduce(ReduceContext& context)
     if (!Emitter::ParseNameKey(name_key, &name, &key)) {
         stringstream s;
         s << "Invalid key [" << name_key << "]";
-        error = s.str();
-        cerr << error << endl;
-        cerr.flush();
-        throw runtime_error(error);
+        throw runtime_error(s.str());
     }
 
     Table* table = tables_[name];
     if (table == NULL) {
         stringstream s;
         s << name_key << ": Invalid table '" << name << "'";
-        error = s.str();
-        cerr << error << endl;
-        cerr.flush();
-        throw runtime_error(error);
+        throw runtime_error(s.str());
     }
 
     while (context.nextValue()) {
         string enc_value(context.getInputValue());
-        cerr << name_key << ": Processing value [" << enc_value << endl;
-        cerr.flush();
         Emitter::ParseValue(enc_value, &value);
         if (!table->Add(key, value, &error)) {
             stringstream s;
             s << name_key << ": Error processing key [" << key <<
                  "], value [" << value << "]: " << error;
-            string err(s.str());
-            cerr << err << endl;
-            cerr.flush();
-            throw runtime_error(err);
+            throw runtime_error(s.str());
         }
     }
-
-    cerr << name_key << ": Collecting results" << endl;
-    cerr.flush();
 
     table->Flush();
     const vector<Result>* res = table->results();
