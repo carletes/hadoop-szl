@@ -101,8 +101,6 @@ void Map::map(MapContext& context) {
         stringstream s;
         s << "Sawzalls failled on input [" << input << "]";
         context.setStatus(s.str());
-    } else {
-        context.progress();
     }
 }
 
