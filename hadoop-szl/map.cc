@@ -77,12 +77,14 @@ SawzallMapRunner::Run(MapContext& context, const string& input)
 }
 
 Map::Map(TaskContext& context)
+    : task_context_(context)
 {
     szl_ = new SawzallMapRunner(context, *this);
 }
 
 Map::~Map()
 {
+    task_context_.setStatus("Map task finished");
     delete szl_;
 }
 

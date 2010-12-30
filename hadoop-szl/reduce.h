@@ -28,6 +28,7 @@ class Reduce : public HadoopPipes::Reducer {
 
   private:
     SawzallRunner* szl_;
+    HadoopPipes::TaskContext& task_context_;
     std::map<std::string, Table*> tables_;
     bool initialized_;
 };

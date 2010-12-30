@@ -46,6 +46,7 @@ class Map : public HadoopPipes::Mapper {
     HadoopPipes::MapContext* context;
 
   private:
+    HadoopPipes::TaskContext& task_context_;
     SawzallMapRunner* szl_;
 };
 

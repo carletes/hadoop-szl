@@ -34,13 +34,14 @@ using hadoop_szl::Table;
 namespace hadoop_szl {
 
 Reduce::Reduce(TaskContext& context)
-    : initialized_(false)
+    : task_context_(context), initialized_(false)
 {
     szl_ = new SawzallRunner(context);
 }
 
 Reduce::~Reduce()
 {
+    task_context_.setStatus("Reduce task finished");
     delete szl_;
 }
 
