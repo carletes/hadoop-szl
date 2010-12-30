@@ -29,10 +29,6 @@ class Emitter : public SzlEmitter {
                              std::string* key);
     static bool ParseValue(const std::string& line,
                            std::string* value);
-    static bool Parse(const std::string& line,
-                      std::string* name,
-                      std::string* key, 
-                      std::string* value);
 
   protected:
     virtual void WriteValue(const std::string& key, const std::string& value);

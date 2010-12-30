@@ -35,35 +35,12 @@ bin_SCRIPTS = scripts/hadoop-saw
 
 scripts/hadoop-saw: scripts/hadoop-saw.in
 
-noinst_PROGRAMS = \
-	mapper \
-	reducer
-
-mapper_SOURCES = \
-	sandbox/mapper.cc
-
-mapper_CPPFLAGS = $(SZL_CFLAGS)
-mapper_LDADD = \
-	libhadoop-szl-impl.la \
-	$(SZL_LIBS) \
-	$(SZL_EMITTERS_LIBS) \
-	$(SZL_INTRINSICS_LIBS)
-
-reducer_SOURCES = \
-	sandbox/reducer.cc
-
-reducer_CPPFLAGS = $(SZL_CFLAGS)
-reducer_LDADD = \
-	libhadoop-szl-impl.la \
-	$(SZL_LIBS) \
-	$(SZL_EMITTERS_LIBS) \
-	$(SZL_INTRINSICS_LIBS)
-
 python_PYTHON = \
 	python/hadoopszl.py
 
 TESTS = \
 	test/bad-syntax/run.sh \
+	test/word-freq/run.sh \
 	test/wc/run.sh
 
 TESTS_ENVIRONMENT = \

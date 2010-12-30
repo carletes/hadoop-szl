@@ -97,20 +97,6 @@ Emitter::ParseValue(const string& line, string* value)
     return true;
 }
 
-bool
-Emitter::Parse(const string& line, string* name, string* key, string* value)
-{
-    string::size_type sep = line.find(" ");
-    if (sep == line.npos) {
-        return false;
-    }
-    if (!ParseNameKey(line.substr(0, sep), name, key)) {
-        return false;
-    }
-    return ParseValue(line.substr(sep + 1), value);
-    return true;
-}
-
 EmitterFactory::EmitterFactory(const Map* mapper)
     : mapper_(mapper)
 {
