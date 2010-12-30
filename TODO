@@ -1,0 +1,3 @@
+* Find a way to avoid base64 encoding and decoding.
+
+* Output of reduce is "42, 42" -- make it just "42".
