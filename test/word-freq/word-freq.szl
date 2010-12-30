@@ -1,0 +1,11 @@
+# word-freq.szl
+#
+# Outputs frequencies of words in a text.
+
+freq: table sum[word: string] of count: int;
+
+words: array of string = sawzall(string(input), `[^ \t,\.]+`);
+
+for (i := 0; i < len(words); i++) {
+  emit freq[lowercase(words[i])] <- 1;
+}
