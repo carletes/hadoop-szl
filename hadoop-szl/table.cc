@@ -25,6 +25,13 @@ Table::Table(const string& name, const string& type_string)
 {
 }
 
+Table::~Table()
+{
+    for (unsigned int i = 0; i < results_.size(); ++i) {
+        delete results_[i];
+    }
+}
+
 bool
 Table::Init(string* error)
 {
@@ -65,12 +72,11 @@ Table::Add(const string& key, const string& value, string* error)
         }
     } else {
         if (tab_writer_->WritesToMill()) {
-            Result res;
-            res.name = name_;
             SzlDecoder key_decoder(key.data(), key.length());
-            res.key = key_decoder.PPrint();
             SzlDecoder value_decoder(value.data(), value.length());
-            res.value = value_decoder.PPrint();
+            Result* res = new Result(name_,
+                                     key_decoder.PPrint(),
+                                     value_decoder.PPrint());
             results_.push_back(res);
         } else {
             te->Write(value);
@@ -80,25 +86,29 @@ Table::Add(const string& key, const string& value, string* error)
     return true;
 }
 
-void
+vector<Result*>*
 Table::Flush()
 {
     if (tab_writer_->Aggregates()) {
         map<string, SzlTabEntry*>::iterator pos;
         for (pos = tab_entries_.begin(); pos != tab_entries_.end(); ++pos) {
-            Result res;
-            res.name = name_;
             string key(pos->first);
             SzlDecoder key_decoder(key.data(), key.length());
-            res.key = key_decoder.PPrint();
             SzlTabEntry* te = pos->second;
             string value;
             te->Flush(&value);
             SzlDecoder value_decoder(value.data(), value.length());
-            res.value = value_decoder.PPrint();
+            Result* res = new Result(name_,
+                                     key_decoder.PPrint(),
+                                     value_decoder.PPrint());
             results_.push_back(res);
         }
+        tab_entries_.clear();
     }
+
+    vector<Result*>* ret = new vector<Result*>(results_);
+    results_.clear();
+    return ret;
 }
 
 }

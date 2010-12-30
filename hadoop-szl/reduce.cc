@@ -105,14 +105,15 @@ Reduce::reduce(ReduceContext& context)
         }
     }
 
-    table->Flush();
-    const vector<Result>* res = table->results();
+    vector<Result*>* res = table->Flush();
     for (unsigned int i = 0; i < res->size(); ++i) {
-        Result r = (*res)[i];
+        Result* r = (*res)[i];
         stringstream s;
-        s << r.name << "[" << r.key << "]";
-        context.emit(s.str(), r.value);
+        s << r->name << "[" << r->key << "]";
+        context.emit(s.str(), r->value);
+        delete r;
     }
+    delete res;
 }
 
 }
