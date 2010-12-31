@@ -1,11 +1,14 @@
 # word-freq.szl
 #
-# Outputs frequencies of words in a text.
+# Outputs frequencies of words in a text, and the top-ten most frequent words.
 
-freq: table sum[word: string] of count: int;
+freqs:    table sum[word: string] of count: int;
+top_ten:  table top(10) of word: string weight count: int;
 
-words: array of string = sawzall(string(input), `[^ \t,\.]+`);
+words: array of string = sawzall(string(input), `[A-Za-z]+`);
 
 for (i := 0; i < len(words); i++) {
-  emit freq[lowercase(words[i])] <- 1;
+  word := lowercase(words[i]);
+  emit freqs[word] <- 1;
+  emit top_ten <- word weight 1;
 }
