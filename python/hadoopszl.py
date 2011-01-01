@@ -1,5 +1,6 @@
 """Command-line driver for executing Hadoop Sawzall jobs."""
 
+import ConfigParser
 import argparse
 import logging
 import os
@@ -49,9 +50,12 @@ def hadoop_pipes(program, input_dir, output_dir, env):
 
 def main(hadoop_szl_runner=None):
     p = argparse.ArgumentParser(prog="hadoop-saw", description=__doc__.strip())
+    p.add_argument("--config-file",
+                   metavar="<path>",
+                   help="path to the hadoop-saw configuration file")
     p.add_argument("program",
                    metavar="<program>",
-                   help="path to the Sawzal program")
+                   help="path to the Sawzall program")
     p.add_argument("input_dir",
                    metavar="<input-dir>",
                    help="path to input directory")
@@ -71,13 +75,19 @@ def main(hadoop_szl_runner=None):
             LOG.error("No Hadoop Sawzall runner specified")
             return 1
 
+    if is_bad_szl(args.program):
+        return 1
+
     env = {
         "hadoop_szl_runner": hadoop_szl_runner,
         "hadoop_opts": {}
     }
 
-    if is_bad_szl(args.program):
-        return 1
+    if args.config_file:
+        LOG.info("Reading config file %s", args.config_file)
+        c = ConfigParser.SafeConfigParser()
+        c.read((args.config_file,))
+        env["hadoop_opts"].update((k, v) for (k, v) in c.items("hadoop"))
 
     return hadoop_pipes(args.program, args.input_dir, args.output_dir, env)
 
