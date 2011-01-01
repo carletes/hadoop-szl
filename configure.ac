@@ -48,5 +48,6 @@ AC_PYTHON_MODULE(argparse, t)
 AC_CONFIG_FILES([
   Makefile
   scripts/hadoop-saw
+  test/run-test.sh
 ])
 AC_OUTPUT

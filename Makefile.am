@@ -31,27 +31,27 @@ hadoop_szl_runner_LDADD = \
 	$(SZL_INTRINSICS_LIBS) \
 	$(HADOOP_PIPES_LIBS)
 
+python_PYTHON = \
+	python/hadoopszl.py
+
 bin_SCRIPTS = scripts/hadoop-saw
 
 scripts/hadoop-saw: scripts/hadoop-saw.in
 
-python_PYTHON = \
-	python/hadoopszl.py
+test/run-test.sh: test/run-test.sh.in
 
 TESTS = \
-	test/bad-syntax/run.sh \
-	test/word-freq/run.sh \
-	test/wc/run.sh
+	test/word-freq/word-freq.szl \
+	test/wc/wc.szl
 
-TESTS_ENVIRONMENT = \
-	pythonpath=$(abs_top_srcdir)/python \
-	hadoop_szl_runner=$(abs_top_builddir)/hadoop-szl-runner \
-	PATH=$(abs_top_builddir)/scripts:$$PATH
+TESTS_ENVIRONMENT = test/run-test.sh
 
 all-local:
+	chmod 0755 test/run-test.sh
 	chmod 0755 scripts/hadoop-saw
 
 EXTRA_DIST = \
+	test/run-test.sh \
 	$(TESTS) \
 	test/bad-syntax/bad-syntax.szl \
 	test/wc/lorem.txt \

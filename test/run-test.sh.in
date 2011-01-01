@@ -1,0 +1,20 @@
+#!/bin/sh
+
+test_szl="$1"
+srcdir="$(cd $(dirname $test_szl) && pwd)"
+job_dir="hdfs:/user/$USER/hadoop-szl/test/$(basename $srcdir)"
+input_dir="$job_dir/in"
+output_dir="$job_dir/out"
+
+hadoop fs -rmr $job_dir
+hadoop fs -mkdir $input_dir
+hadoop fs -put $srcdir/*.txt $input_dir
+
+env \
+	pythonpath=@abs_top_srcdir@/python \
+	hadoop_szl_runner=@abs_top_builddir@/hadoop-szl-runner \
+	PATH=@abs_top_builddir@/scripts:$PATH \
+    hadoop-saw \
+      $test_szl \
+      $input_dir \
+      $output_dir
